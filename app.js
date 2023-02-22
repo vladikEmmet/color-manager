@@ -1,14 +1,8 @@
 // Variables
 
-const columns = document.querySelectorAll(".column");
+let columns = document.querySelectorAll(".column");
 const settingsBtn = document.querySelector(".settings");
 const settingsContainer = document.querySelector(".settings-container");
-const settingsGenerateColorsBtn = settingsContainer.querySelector(
-  ".generate-colors-item"
-);
-const settingsColorInversion = settingsContainer.querySelector(
-  ".color-inversion-item"
-);
 const settingsShowGradients = settingsContainer.querySelector(
   ".show-gradient-item"
 );
@@ -25,7 +19,7 @@ function setRandomColors(isInitial) {
 
   columns.forEach((col, idx, arr) => {
     const text = col.querySelector("h2");
-    const button = col.querySelector("button");
+    const buttons = col.querySelectorAll("button");
 
     if (col.querySelector("i").classList.contains("fa-lock")) {
       colors.push(text.textContent);
@@ -46,7 +40,7 @@ function setRandomColors(isInitial) {
     text.textContent = color;
 
     setTextColor(text, color);
-    setTextColor(button, color);
+    buttons.forEach((btn) => setTextColor(btn, color));
     if (idx === arr.length - 1) {
       setTextColor(settingsBtn, color);
     }
@@ -60,25 +54,29 @@ function setGradientColors() {
   const firstColumn = columns[0];
   firstColumn.style.backgroundColor = firstColor;
   setTextColor(firstColumn.querySelector("h2"), firstColor);
-  setTextColor(firstColumn.querySelector("button"), firstColor);
+  firstColumn
+    .querySelectorAll("button")
+    .forEach((btn) => setTextColor(btn, firstColor));
 
   const lastColor = chroma.random();
   const lastColumn = columns[columns.length - 1];
   lastColumn.style.backgroundColor = lastColor;
   setTextColor(lastColumn.querySelector("h2"), lastColor);
-  setTextColor(lastColumn.querySelector("button"), lastColor);
+  lastColumn
+    .querySelectorAll("button")
+    .forEach((btn) => setTextColor(btn, lastColor));
   setTextColor(settingsBtn, lastColor);
 
-  const colors = chroma.scale([firstColor, lastColor]).colors(5);
+  const colors = chroma.scale([firstColor, lastColor]).colors(columns.length);
   for (let i = 1; i < columns.length - 1; i++) {
     const col = columns[i];
     if (col.querySelector("i").classList.contains("fa-lock")) continue;
     const text = col.querySelector("h2");
-    const button = col.querySelector("button");
+    const buttons = col.querySelectorAll("button");
 
     col.style.backgroundColor = colors[i];
     setTextColor(text, colors[i]);
-    setTextColor(button, colors[i]);
+    buttons.forEach((btn) => setTextColor(btn, colors[i]));
   }
 }
 
@@ -108,6 +106,34 @@ function getColorsHash() {
   return [];
 }
 
+function addNewColumn() {
+  const newCol = document.createElement("div");
+  newCol.classList.add("column");
+  const newTitle = document.createElement("h2");
+  newTitle.setAttribute("data-type", "copy");
+  const lockBtn = document.createElement("button");
+  lockBtn.setAttribute("data-type", "lock");
+  const lockIcon = document.createElement("i");
+  lockIcon.classList.add("fa-solid");
+  lockIcon.classList.add("fa-lock-open");
+  lockIcon.setAttribute("data-type", "lock");
+  lockBtn.append(lockIcon);
+  const removeBtn = document.createElement("button");
+  const removeIcon = document.createElement("i");
+  removeIcon.classList.add("fa-solid");
+  removeIcon.classList.add("fa-minus");
+  removeIcon.setAttribute("data-type", "remove");
+  removeBtn.setAttribute("data-type", "remove");
+  removeBtn.append(removeIcon);
+  newCol.append(newTitle, lockBtn, removeBtn);
+  document.body.append(newCol);
+  const color = chroma.random();
+  newCol.style.background = color;
+  newTitle.textContent = color;
+  columns = document.querySelectorAll(".column");
+  setColorsHash([...getColorsHash(), color]);
+}
+
 // Event Listeners
 
 settingsBtn.addEventListener("click", function () {
@@ -126,9 +152,62 @@ settingsBtn.addEventListener("click", function () {
   );
 });
 
-settingsGenerateColorsBtn.addEventListener("click", function () {
-  setRandomColors();
-  settingsContainer.classList.remove("active");
+settingsContainer.addEventListener("click", function (e) {
+  const target = e.target;
+  if (
+    target.classList.contains("generate-colors-item") ||
+    target.closest(".generate-colors-item")
+  ) {
+    setRandomColors();
+    settingsContainer.classList.remove("active");
+    return;
+  }
+  if (
+    target.classList.contains("show-gradient-item") ||
+    target.closest(".show-gradient-item")
+  ) {
+    if (isGradients) {
+      e.target.querySelector(".gradients-state").textContent = "off";
+      setRandomColors();
+      isGradients = false;
+      return;
+    }
+    e.target.querySelector(".gradients-state").textContent = "on";
+    setGradientColors();
+    isGradients = true;
+    return;
+  }
+  if (target.classList.contains("color-inversion-item")) {
+    if (invertColor) {
+      invertColor = false;
+      columns.forEach((col) => {
+        col.querySelector("h2").style.color = "black";
+        col.querySelector("button").style.color = "black";
+      });
+
+      settingsBtn.style.color = "black";
+      this.querySelector("span").textContent = "off";
+      return;
+    }
+
+    invertColor = true;
+    columns.forEach((col, idx) => {
+      const color = window.getComputedStyle(col).backgroundColor;
+      const text = col.querySelector("h2");
+      const button = col.querySelector("button");
+
+      setTextColor(text, color);
+      setTextColor(button, color);
+      this.querySelector("span").textContent = "on";
+    });
+    return;
+  }
+
+  if (target.classList.contains("add-new-column")) {
+    addNewColumn();
+    this.classList.remove("active");
+    return;
+  }
 });
 
 document.addEventListener("keyup", function (e) {
@@ -140,44 +219,14 @@ document.addEventListener("keyup", function (e) {
     }
     setRandomColors();
   }
-});
 
-settingsColorInversion.addEventListener("click", function () {
-  if (invertColor) {
-    invertColor = false;
-    columns.forEach((col) => {
-      col.querySelector("h2").style.color = "black";
-      col.querySelector("button").style.color = "black";
-    });
-
-    settingsBtn.style.color = "black";
-    this.querySelector("span").textContent = "off";
-    return;
+  if (e.code === "Escape" && settingsContainer.classList.contains("active")) {
+    settingsContainer.classList.remove("active");
   }
 
-  invertColor = true;
-  columns.forEach((col, idx) => {
-    const color = window.getComputedStyle(col).backgroundColor;
-    const text = col.querySelector("h2");
-    const button = col.querySelector("button");
-
-    setTextColor(text, color);
-    setTextColor(button, color);
-    this.querySelector("span").textContent = "on";
-  });
-});
-
-settingsShowGradients.addEventListener("click", function () {
-  if (isGradients) {
-    this.querySelector(".gradients-state").textContent = "off";
-    setRandomColors();
-    isGradients = false;
-    return;
+  if (e.code === "KeyN" && e.shiftKey) {
+    addNewColumn();
   }
-
-  this.querySelector(".gradients-state").textContent = "on";
-  setGradientColors();
-  isGradients = true;
 });
 
 document.addEventListener("click", function (e) {
@@ -201,6 +250,11 @@ document.addEventListener("click", function (e) {
       copyNotification.style.visibility = "hidden";
       copyNotification.style.opacity = "0";
     }, 2000);
+  }
+
+  if (type === "remove") {
+    if (columns.length === 1) return;
+    e.target.closest(".column").remove();
   }
 });
 

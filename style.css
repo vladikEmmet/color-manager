@@ -97,7 +97,8 @@ body {
   background: rgba(0, 0, 0, 0.1);
 }
 
-.generate-colors-item span {
+.generate-colors-item span,
+.add-new-column span {
   display: inline-block;
   color: rgb(172, 172, 172);
   margin-left: 15%;
