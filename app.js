@@ -182,7 +182,7 @@ settingsContainer.addEventListener("click", function (e) {
       invertColor = false;
       columns.forEach((col) => {
         col.querySelector("h2").style.color = "black";
-        col.querySelector("button").style.color = "black";
+        col.querySelectorAll("button").forEach(btn => btn.style.color = "black");
       });
 
       settingsBtn.style.color = "black";
@@ -206,7 +206,6 @@ settingsContainer.addEventListener("click", function (e) {
   if (target.classList.contains("add-new-column")) {
     addNewColumn();
     this.classList.remove("active");
-    return;
   }
 });
 
