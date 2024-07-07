@@ -52,7 +52,7 @@ body {
   top: 5%;
   right: 3%;
   padding: 0;
-  transition: 0.5s all ease 0.1s;
+  transition: 0.5s transform ease 0.1s;
   z-index: 3;
 }
 
@@ -98,7 +98,8 @@ body {
 }
 
 .generate-colors-item span,
-.add-new-column span {
+.add-new-column span,
+.close-settings span {
   display: inline-block;
   color: rgb(172, 172, 172);
   margin-left: 15%;

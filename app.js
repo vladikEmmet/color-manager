@@ -186,7 +186,7 @@ settingsContainer.addEventListener("click", function (e) {
       });
 
       settingsBtn.style.color = "black";
-      this.querySelector("span").textContent = "off";
+      target.querySelector("span").textContent = "off";
       return;
     }
 
@@ -198,7 +198,7 @@ settingsContainer.addEventListener("click", function (e) {
 
       setTextColor(text, color);
       setTextColor(button, color);
-      this.querySelector("span").textContent = "on";
+      target.querySelector("span").textContent = "on";
     });
     return;
   }
@@ -213,6 +213,9 @@ settingsContainer.addEventListener("click", function (e) {
 document.addEventListener("keyup", function (e) {
   if (e.code === "Space") {
     e.preventDefault();
+    if(settingsContainer.classList.contains("active")) {
+        settingsContainer.classList.remove("active");
+    }
     if (isGradients) {
       setGradientColors();
       return;
@@ -226,6 +229,11 @@ document.addEventListener("keyup", function (e) {
 
   if (e.code === "KeyN" && e.shiftKey) {
     addNewColumn();
+  }
+
+  if(e.code === "KeyS") {
+    e.preventDefault();
+    settingsContainer.classList.add('active');
   }
 });
 
@@ -257,7 +265,5 @@ document.addEventListener("click", function (e) {
     e.target.closest(".column").remove();
   }
 });
-
-document.querySelector;
 
 setRandomColors(true);
