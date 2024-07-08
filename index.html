@@ -7,13 +7,37 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w==" crossorigin="anonymous" referrerpolicy="no-referrer">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chroma-js/2.4.2/chroma.min.js" integrity="sha512-zInFF17qBFVvvvFpIfeBzo7Tj7+rQxLeTJDmbxjBz5/zIr89YVbTNelNhdTT+/DCrxoVzBeUPVFJsczKbB7sew==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script defer src="app.js"></script>
+    <script defer type="module" src="functions.js"></script>
+    <script defer src="app.js" type="module"></script>
+    <script defer src="view.js" type="module"></script>
     <link type="image/x-icon" rel="icon" href="favicon.ico" />
     <title>Color manager</title>
+    <style class="modal-style">
+
+    </style>
 </head>
 <body>
+    <header class="header" id="header">
+        <div class="header-section">
+            <button class="generate-btn" data-type="generate-btn">Generate</button>
+        </div>
+        <div class="header-section header-divider"></div>
+        <div class="header-section">
+            <button class="quick-view" data-type="quick-view">
+                <i class="fa-solid fa-eye"></i>
+                View
+            </button>
 
-    <button class="settings"><i class="fa-solid fa-gear"></i></button>
+            <button class="export" data-type="export">
+                <i class="fa-solid fa-share-nodes"></i>
+                Export
+            </button>
+        </div>
+        <div class="header-section header-divider"></div>
+        <div class="header-section">
+            <button class="settings" style="color: black"><i class="fa-solid fa-gear"></i></button>
+        </div>
+    </header>
     <div class="settings-container">
         <ul>
             <li class="generate-colors-item">Generate random colors <span>(Space)</span></li>
@@ -24,35 +48,93 @@
         </ul>
     </div>
 
-    <div class="column">
-        <h2 data-type="copy"></h2>
-        <button data-type="lock"><i class="fa-solid fa-lock-open" data-type="lock"></i></button>
-        <button data-type="remove"><i class="fa-solid fa-minus" data-type="remove"></i></button>
-    </div>
-    <div class="column">
-        <h2 data-type="copy"></h2>
-        <button data-type="lock"><i class="fa-solid fa-lock-open" data-type="lock"></i></button>
-        <button data-type="remove"><i class="fa-solid fa-minus" data-type="remove"></i></button>
-    </div>
-    <div class="column">
-        <h2 data-type="copy"></h2>
-        <button data-type="lock"><i class="fa-solid fa-lock-open" data-type="lock"></i></button>
-        <button data-type="remove"><i class="fa-solid fa-minus" data-type="remove"></i></button>
-    </div>
-    <div class="column">
-        <h2 data-type="copy"></h2>
-        <button data-type="lock"><i class="fa-solid fa-lock-open" data-type="lock"></i></button>
-        <button data-type="remove"><i class="fa-solid fa-minus" data-type="remove"></i></button>
-    </div>
-    <div class="column">
-        <h2 data-type="copy"></h2>
-        <button data-type="lock"><i class="fa-solid fa-lock-open" data-type="lock"></i></button>
-        <button data-type="remove"><i class="fa-solid fa-minus" data-type="remove"></i></button>
+    <div class="columns-container">
+        <div class="column">
+            <h2 data-type="copy"></h2>
+            <button data-type="lock"><i class="fa-solid fa-lock-open" data-type="lock"></i></button>
+            <button data-type="remove"><i class="fa-solid fa-minus" data-type="remove"></i></button>
+        </div>
+        <div class="column">
+            <h2 data-type="copy"></h2>
+            <button data-type="lock"><i class="fa-solid fa-lock-open" data-type="lock"></i></button>
+            <button data-type="remove"><i class="fa-solid fa-minus" data-type="remove"></i></button>
+        </div>
+        <div class="column">
+            <h2 data-type="copy"></h2>
+            <button data-type="lock"><i class="fa-solid fa-lock-open" data-type="lock"></i></button>
+            <button data-type="remove"><i class="fa-solid fa-minus" data-type="remove"></i></button>
+        </div>
+        <div class="column">
+            <h2 data-type="copy"></h2>
+            <button data-type="lock"><i class="fa-solid fa-lock-open" data-type="lock"></i></button>
+            <button data-type="remove"><i class="fa-solid fa-minus" data-type="remove"></i></button>
+        </div>
+        <div class="column">
+            <h2 data-type="copy"></h2>
+            <button data-type="lock"><i class="fa-solid fa-lock-open" data-type="lock"></i></button>
+            <button data-type="remove"><i class="fa-solid fa-minus" data-type="remove"></i></button>
+        </div>
     </div>
 
     <div class="successful-copy-notification">
         <h4>Copied!</h4>
     </div>
+
+    <dialog class="view-modal">
+        <div class="view-modal-container">
+            <div class="modal-header">
+                <button class="close-view">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+                <h3>Quick view</h3>
+            </div>
+            <div class="modal-body">
+                <div class="view-color-info view-hex">
+                    <div class="info">
+                        <p>HEX</p>
+                    </div>
+                    <div class="copy">
+                        <p>Copy</p>
+                    </div>
+                </div>
+                <div class="view-color-info view-hsb">
+                    <div class="info">
+                        <p>HSB</p>
+                    </div>
+                    <div class="copy">
+                        <p>Copy</p>
+                    </div>
+                </div>
+                <div class="view-color-info view-hsl">
+                    <div class="info">
+                        <p>HSL</p>
+                    </div>
+                    <div class="copy">
+                        <p>Copy</p>
+                    </div>
+                </div>
+                <div class="view-color-info view-rgb">
+                    <div class="info">
+                        <p>RGB</p>
+                    </div>
+                    <div class="copy">
+                        <p>Copy</p>
+                    </div>
+                </div>
+                <div class="view-color-info view-name">
+                    <div class="info">
+                        <p>CMYK</p>
+                    </div>
+                    <div class="copy">
+                        <p>Copy</p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="selected-colors"></div>
+            </div>
+        </div>
+    </dialog>
 
 </body>
 </html>

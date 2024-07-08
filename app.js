@@ -1,3 +1,4 @@
+import {setCurTextColor} from "./functions.js";
 // Variables
 
 let columns = document.querySelectorAll(".column");
@@ -41,9 +42,6 @@ function setRandomColors(isInitial) {
 
     setTextColor(text, color);
     buttons.forEach((btn) => setTextColor(btn, color));
-    if (idx === arr.length - 1) {
-      setTextColor(settingsBtn, color);
-    }
   });
 
   setColorsHash(colors);
@@ -65,7 +63,6 @@ function setGradientColors() {
   lastColumn
     .querySelectorAll("button")
     .forEach((btn) => setTextColor(btn, lastColor));
-  setTextColor(settingsBtn, lastColor);
 
   const colors = chroma.scale([firstColor, lastColor]).colors(columns.length);
   for (let i = 1; i < columns.length - 1; i++) {
@@ -82,8 +79,9 @@ function setGradientColors() {
 
 function setTextColor(text, color) {
   if (!invertColor) return;
-  const lum = chroma(color).luminance();
-  text.style.color = lum > 0.5 ? "black" : "white";
+  // const lum = chroma(color).luminance();
+  // text.style.color = lum > 0.5 ? "black" : "white";
+    setCurTextColor(text, color);
 }
 
 function copyColor(text) {
@@ -126,7 +124,8 @@ function addNewColumn() {
   removeBtn.setAttribute("data-type", "remove");
   removeBtn.append(removeIcon);
   newCol.append(newTitle, lockBtn, removeBtn);
-  document.body.append(newCol);
+  console.log(newCol);
+  document.querySelector('.columns-container').append(newCol);
   const color = chroma.random();
   newCol.style.background = color;
   newTitle.textContent = color;
@@ -144,12 +143,7 @@ settingsBtn.addEventListener("click", function () {
     settingsShowGradients.querySelector(".gradients-state").textContent =
       isGradients ? "on" : "off";
     this.style.color = "black";
-    return;
   }
-  setTextColor(
-    this,
-    window.getComputedStyle(columns[columns.length - 1]).backgroundColor
-  );
 });
 
 settingsContainer.addEventListener("click", function (e) {
@@ -194,10 +188,10 @@ settingsContainer.addEventListener("click", function (e) {
     columns.forEach((col, idx) => {
       const color = window.getComputedStyle(col).backgroundColor;
       const text = col.querySelector("h2");
-      const button = col.querySelector("button");
+      const buttons = col.querySelectorAll("button");
 
       setTextColor(text, color);
-      setTextColor(button, color);
+      buttons.forEach(btn => setTextColor(btn, color));
       target.querySelector("span").textContent = "on";
     });
     return;
@@ -262,6 +256,11 @@ document.addEventListener("click", function (e) {
   if (type === "remove") {
     if (columns.length === 1) return;
     e.target.closest(".column").remove();
+  }
+
+  if(type === "generate-btn") {
+    setRandomColors();
+    settingsContainer.classList.remove('active');
   }
 });
 
