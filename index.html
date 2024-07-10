@@ -5,11 +5,13 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="modals.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w==" crossorigin="anonymous" referrerpolicy="no-referrer">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chroma-js/2.4.2/chroma.min.js" integrity="sha512-zInFF17qBFVvvvFpIfeBzo7Tj7+rQxLeTJDmbxjBz5/zIr89YVbTNelNhdTT+/DCrxoVzBeUPVFJsczKbB7sew==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script defer type="module" src="functions.js"></script>
     <script defer src="app.js" type="module"></script>
     <script defer src="view.js" type="module"></script>
+    <script defer src="export.js" type="module"></script>
     <link type="image/x-icon" rel="icon" href="favicon.ico" />
     <title>Color manager</title>
     <style class="modal-style">
@@ -28,7 +30,7 @@
                 View
             </button>
 
-            <button class="export" data-type="export">
+            <button class="export-btn" data-type="export">
                 <i class="fa-solid fa-share-nodes"></i>
                 Export
             </button>
@@ -132,6 +134,45 @@
             </div>
             <div class="modal-footer">
                 <div class="selected-colors"></div>
+            </div>
+        </div>
+    </dialog>
+
+    <dialog class="export-modal">
+        <div class="export-modal-container">
+            <div class="modal-header">
+                <button class="close-export">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+                <h3>Export Palette</h3>
+            </div>
+            <div class="modal-body">
+                <div class="export-type-list">
+                    <div class="export-type-item">
+                        <button class="export-type-button" data-type="link">
+                            <i class="fa-solid fa-link"></i>
+                            URL
+                        </button>
+                    </div>
+                    <div class="export-type-item">
+                        <button class="export-type-button" data-type="css">
+                            <i class="fa-brands fa-css3"></i>
+                            CSS
+                        </button>
+                    </div>
+                    <div class="export-type-item">
+                        <button class="export-type-button" data-type="pdf">
+                            <i class="fa-regular fa-file-pdf"></i>
+                            PDF
+                        </button>
+                    </div>
+                    <div class="export-type-item">
+                        <button class="export-type-button" data-type="code">
+                            <i class="fa-solid fa-code"></i>
+                            Code
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </dialog>

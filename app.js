@@ -79,8 +79,6 @@ function setGradientColors() {
 
 function setTextColor(text, color) {
   if (!invertColor) return;
-  // const lum = chroma(color).luminance();
-  // text.style.color = lum > 0.5 ? "black" : "white";
     setCurTextColor(text, color);
 }
 
