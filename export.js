@@ -98,6 +98,81 @@ function downloadSCSSFile() {
     document.body.removeChild(a);
 }
 
+function generateXML() {
+    let xmlDoc = document.implementation.createDocument(null, "palette");
+    const paletteElement = xmlDoc.documentElement;
+    generateCSSInfo();
+
+    for(const key in colorsInfo) {
+        let color = colorsInfo[key];
+        let colorElement = xmlDoc.createElement("color");
+        colorElement.setAttribute("name", "${key}");
+        colorElement.setAttribute("hex", color.hex.slice(1));
+        colorElement.setAttribute("r", color.rgba[0]);
+        colorElement.setAttribute("g", color.rgba[1]);
+        colorElement.setAttribute("b", color.rgba[2]);
+
+        paletteElement.appendChild(colorElement);
+    }
+
+    return xmlDoc;
+}
+
+function XMLToString(xml) {
+    return new XMLSerializer().serializeToString(xml);
+}
+
+function XMLStringToBlob(string) {
+    return new Blob([string], {type: 'text/xml'});
+}
+
+function downloadXMLFile(blob) {
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = 'palette.xml';
+
+    document.body.appendChild(link);
+    link.click();
+
+    document.body.removeChild(link);
+}
+
+function generateAndDownloadXML() {
+    const xml = generateXML();
+    const xmlString = XMLToString(xml);
+    const blob = XMLStringToBlob(xmlString);
+    downloadXMLFile(blob);
+}
+
+async function generatePdf() {
+    try {
+        // const { jsPDF } = await import('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+
+        let yCoord = 20;
+        const xCoord = 20;
+        generateCSSInfo();
+        for(const clr in colorsInfo) {
+            const color = colorsInfo[clr];
+            doc.setFillColor(color.hex);
+            doc.rect(xCoord, yCoord, 50, 20, 'F');
+
+            if(chroma(color.hex).luminance() > 0.5) {
+                doc.setTextColor(0, 0, 0);
+            } else {
+                doc.setTextColor(255, 255, 255);
+            }
+            doc.text(color.hex, xCoord + 25, yCoord + 10);
+            yCoord += 30;
+        }
+
+        doc.save('palette.pdf');
+    } catch (error) {
+        console.error('Error loading jsPDF', error);
+    }
+}
+
 function copyLinkWithNotification() {
     copyLink()
         .catch(err => {
@@ -134,6 +209,14 @@ exportModal.querySelector('.modal-body').addEventListener('click', (e) => {
             break;
         case "css":
             downloadSCSSFile();
+            break;
+        case "pdf":
+            generatePdf();
+            break;
+        case "xml":
+            generateAndDownloadXML();
+            break;
+        default:
             break;
     }
 });
